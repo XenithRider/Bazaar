@@ -45,4 +45,17 @@ public class ProductController {
         productService.deleteProduct(id);
     }
 
+    // Get eco-certified products
+    @GetMapping("/eco")
+    public List<Product> getEcoCertified() {
+        return productService.getEcoCertifiedProducts();
+    }
+
+
+    // Get eco-certified products sorted by carbon impact
+    @GetMapping("/eco/sorted")
+    public List<Product> getEcoCertifiedSorted() {
+        return productService.getEcoCertifiedSortedByCarbonImpact();
+    }
+
 }

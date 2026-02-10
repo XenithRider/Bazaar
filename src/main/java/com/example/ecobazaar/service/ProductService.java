@@ -48,4 +48,15 @@ public class ProductService {
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
+
+    // Get only eco-certified products
+    public List<Product> getEcoCertifiedProducts() {
+        return productRepository.findByEcoCertifiedTrue();
+    }
+
+
+    // Get eco-certified products sorted by carbon impact
+    public List<Product> getEcoCertifiedSortedByCarbonImpact() {
+        return productRepository.findByEcoCertifiedTrueOrderByCarbonImpactAsc();
+    }
 }
