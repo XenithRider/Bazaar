@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AdminRequestRepository extends JpaRepository<AdminRequest, Long> {
+
     List<AdminRequest> findByApprovedFalseAndRejectedFalseOrderByRequestedAtDesc();
-    boolean existsByUserIdAndApprovedFalseAndRejectedFalse(Long userId);
+
+    // FIXED: Changed from existsByUserIdAndApprovedFalseAndRejectedFalse
+    boolean existsByUser_IdAndApprovedFalseAndRejectedFalse(Long userId);
 
     long countByApprovedFalseAndRejectedFalse();
 
-    boolean existsByUserId(Long userId);
+    // FIXED: Changed from existsByUserId to existsByUser_Id
+    boolean existsByUser_Id(Long userId);
 }

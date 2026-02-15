@@ -39,13 +39,11 @@ public class ProductController {
         return productService.createProduct(product);
     }
 
-
     // public marketplace -> show ALL products (including non-certified)
     @GetMapping
     public List<Product> listAllProducts() {
         return productService.getAllProducts();
     }
-
 
     @PreAuthorize("hasAnyRole('SELLER','ADMIN')")
     @GetMapping("/seller")
@@ -72,7 +70,8 @@ public class ProductController {
 
         boolean isAdmin = current.getRole() != null && current.getRole().toUpperCase().contains("ADMIN");
         if (!isAdmin) {
-            if (existing.getSeller() == null || existing.getSeller().getId() != current.getId()) {
+            // FIXED: Proper Long comparison using equals()
+            if (existing.getSeller() == null || !existing.getSeller().getId().equals(current.getId())) {
                 throw new org.springframework.security.access.AccessDeniedException("You are not the owner of this product");
             }
         }
@@ -84,9 +83,8 @@ public class ProductController {
         existing.setImageUrl(incoming.getImageUrl());
         existing.setEcoRequested(incoming.getEcoRequested() == null ? existing.isEcoRequested() : incoming.getEcoRequested());
 
-        return productService.saveProduct(existing); // create a small save wrapper in service (see below)
+        return productService.saveProduct(existing);
     }
-
 
     @PreAuthorize("hasAnyRole('SELLER','ADMIN')")
     @DeleteMapping("/{id}")

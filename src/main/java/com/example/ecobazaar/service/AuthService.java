@@ -1,15 +1,13 @@
 package com.example.ecobazaar.service;
 
-import com.example.ecobazaar.config.JwtUtil;
 import com.example.ecobazaar.dto.LoginRequest;
 import com.example.ecobazaar.dto.RegisterRequest;
 import com.example.ecobazaar.dto.UserResponse;
 import com.example.ecobazaar.model.User;
 import com.example.ecobazaar.repository.UserRepository;
+import com.example.ecobazaar.util.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -49,7 +47,17 @@ public class AuthService {
                 " | Role: " + saved.getRole() +
                 " | Password hash: " + saved.getPassword());
 
-        return new UserResponse(saved.getId(), saved.getName(), saved.getEmail(), saved.getRole(), 0, null);
+        // FIXED: Generate token for registration too
+        String token = jwtUtil.generateToken(saved.getEmail(), saved.getRole(), saved.getId());
+
+        return new UserResponse(
+                saved.getId(),
+                saved.getName(),
+                saved.getEmail(),
+                saved.getRole(),
+                saved.getEcoScore(),
+                token  // FIXED: Now includes token
+        );
     }
 
     public UserResponse login(LoginRequest login) {

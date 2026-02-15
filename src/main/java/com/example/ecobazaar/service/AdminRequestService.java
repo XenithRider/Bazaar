@@ -1,6 +1,5 @@
 package com.example.ecobazaar.service;
 
-
 import com.example.ecobazaar.model.AdminRequest;
 import com.example.ecobazaar.model.User;
 import com.example.ecobazaar.repository.AdminRequestRepository;
@@ -32,7 +31,8 @@ public class AdminRequestService {
             throw new RuntimeException("You are already an admin");
         }
 
-        if (adminRequestRepo.existsByUserIdAndApprovedFalseAndRejectedFalse(userId)) {
+        // FIXED: Changed from existsByUserIdAndApprovedFalseAndRejectedFalse
+        if (adminRequestRepo.existsByUser_IdAndApprovedFalseAndRejectedFalse(userId)) {
             throw new RuntimeException("You already have a pending admin request");
         }
 

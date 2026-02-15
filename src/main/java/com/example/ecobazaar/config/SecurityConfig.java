@@ -1,6 +1,7 @@
 package com.example.ecobazaar.config;
 
 
+import com.example.ecobazaar.security.JwtFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
