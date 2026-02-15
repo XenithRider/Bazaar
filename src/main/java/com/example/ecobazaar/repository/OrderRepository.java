@@ -12,14 +12,19 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByUserId(Long userId);
 
+    // FIXED: Renamed to getTotalSpentByUser and kept @Query
     @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.userId = :userId")
-    Double getTotalSpendByUser(@Param("userId") Long userId);
+    Double getTotalSpentByUser(@Param("userId") Long userId);
 
     @Query("SELECT SUM(o.carbonUsed) FROM Order o WHERE o.userId = :userId")
     Double getTotalCarbonUsed(@Param("userId") Long userId);
 
     @Query("SELECT SUM(o.carbonSaved) FROM Order o WHERE o.userId = :userId")
     Double getTotalCarbonSaved(@Param("userId") Long userId);
+
+    // FIXED: Added @Query annotation for getTotalCarbonByUser
+    @Query("SELECT SUM(o.totalCarbon) FROM Order o WHERE o.userId = :userId")
+    Double getTotalCarbonByUser(@Param("userId") Long userId);
 
     @Query(value = "SELECT DATE(o.order_date), COALESCE(SUM(o.carbon_saved), 0) " +
             "FROM orders o WHERE o.user_id = :userId AND o.order_date BETWEEN :start AND :end " +
@@ -32,8 +37,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "GROUP BY DATE(o.order_date) ORDER BY DATE(o.order_date)", nativeQuery = true)
     List<Object[]> getDailyCarbonUsed(@Param("userId") Long userId,
                                       @Param("start") Date start, @Param("end") Date end);
-
-    Double getTotalSpentByUser(Long userId);
-
-    Double getTotalCarbonByUser(Long userId);
 }
