@@ -15,14 +15,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findFirstByEcoCertifiedFalseAndNameContainingIgnoreCase(String keyword);
 
-    // FIXED: Changed to use the relationship path seller.id
+    List<Product> findByEcoRequestedTrue();
     List<Product> findBySeller_Id(Long sellerId);
-
     List<Product> findByEcoCertifiedTrueAndNameContainingIgnoreCase(String name);
 
     List<Product> findByEcoCertifiedFalse();
-
-    Optional<Product> findFirstByNameContainingAndEcoCertifiedTrue(String namePart);
-
-    List<Product> findByEcoRequestedTrue();
 }

@@ -1,10 +1,14 @@
 package com.example.ecobazaar.controller;
 
+import com.example.ecobazaar.dto.PendingProductDto;
+import com.example.ecobazaar.dto.PendingSellerDto;
 import com.example.ecobazaar.model.Product;
 import com.example.ecobazaar.model.User;
 import com.example.ecobazaar.repository.ProductRepository;
 import com.example.ecobazaar.repository.UserRepository;
 import com.example.ecobazaar.service.AdminService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 

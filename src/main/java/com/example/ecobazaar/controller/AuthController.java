@@ -28,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register (@Valid @RequestBody RegisterRequest request){
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
             return ResponseEntity.ok(authService.register(request));
         } catch (RuntimeException e) {

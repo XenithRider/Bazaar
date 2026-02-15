@@ -1,7 +1,6 @@
 package com.example.ecobazaar.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity

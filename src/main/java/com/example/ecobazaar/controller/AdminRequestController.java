@@ -1,5 +1,6 @@
 package com.example.ecobazaar.controller;
 
+import com.example.ecobazaar.dto.PendingAdminRequestDto;
 import com.example.ecobazaar.model.User;
 import com.example.ecobazaar.repository.UserRepository;
 import com.example.ecobazaar.service.AdminRequestService;
@@ -9,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
