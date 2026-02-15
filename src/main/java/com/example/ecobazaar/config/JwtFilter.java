@@ -49,10 +49,14 @@ public class JwtFilter extends OncePerRequestFilter { //  extend OncePerRequestF
         Claims claims = jwtUtil.getClaims(token);
         String email = claims.getSubject();
         String role = claims.get("role", String.class);
+        Long userId = claims.get("userId", Long.class); // extract userId too
 
         // Create Spring Authentication object
         var authority = new SimpleGrantedAuthority(role);
         var auth = new UsernamePasswordAuthenticationToken(email, null, Collections.singletonList(authority));
+
+        // attach userId as details for direct access later
+        auth.setDetails(userId);
 
         // Save authentication in context
         SecurityContextHolder.getContext().setAuthentication(auth);

@@ -3,7 +3,9 @@ package com.example.ecobazaar.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,18 +22,29 @@ public class SecurityConfig {
 
     @Bean
 
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterConfig(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity (for now)
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for REST APIs
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT stateless
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll() // Public endpoints
-                        .anyRequest().authenticated() // all others need login
+                                // Public auth endpoints
+                                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                                // Public product browsing (GET)
+                                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                                // Product management (create/update/delete) -> SELLER or ADMIN
+                                .requestMatchers("/api/products/**").hasAnyRole("SELLER", "ADMIN")
+                                // Cart / Checkout / Orders -> only USER role
+                                .requestMatchers("/api/cart/**", "/api/checkout/**", "/api/orders/**")
+                                .hasRole("USER")
+                                // Admin endpoints -> ADMIN only
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                // Others: authenticated
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Attach our JWT filter
                 .formLogin(form -> form.disable()) // Disable form-based login
-                .httpBasic(); // simple username/password popup
+                .httpBasic(basic -> basic.disable()); // Disable browser popup login
         return http.build();
-
     }
 
     @Bean

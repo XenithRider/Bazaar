@@ -2,7 +2,12 @@ package com.example.ecobazaar.controller;
 
 
 import com.example.ecobazaar.model.Order;
+import com.example.ecobazaar.model.User;
+import com.example.ecobazaar.repository.UserRepository;
 import com.example.ecobazaar.service.OrderService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,21 +17,31 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService ;
+    private final UserRepository userRepository;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, UserRepository userRepository) {
         this.orderService = orderService;
+        this.userRepository = userRepository;
     }
 
-    // Checkout (create new order)
-    @PostMapping("/checkout/{userId}")
-    public Order checkout(@PathVariable Long userId) {
-        return orderService.checkout(userId);
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/checkout")
+    public Order checkout() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return orderService.checkout(currentUser.getId());
     }
 
-    // View past orders
-    @GetMapping("/{userId}")
-    public List<Order> getUserOrders(@PathVariable Long userId) {
-        return orderService.getOrdersByUser(userId);
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping
+    public List<Order> getUserOrders() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return orderService.getOrdersByUserId(currentUser.getId());
     }
 
 }
