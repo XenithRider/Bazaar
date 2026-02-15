@@ -14,8 +14,11 @@ public class Product {
     private String details ;
     private Double price ;
     private Double carbonImpact ;
-    private Boolean ecoCertified ;
+
     private Long sellerId ;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean ecoCertified = false;
 
     public Product() {
     }

@@ -19,6 +19,7 @@ public class ProductService {
 
     //CREATE
     public Product addProduct(Product product){
+        product.setEcoCertified(false);
         return productRepository.save(product);
     }
 
