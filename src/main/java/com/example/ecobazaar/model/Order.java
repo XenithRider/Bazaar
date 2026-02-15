@@ -2,6 +2,7 @@ package com.example.ecobazaar.model;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 
