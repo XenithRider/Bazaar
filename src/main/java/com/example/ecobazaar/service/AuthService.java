@@ -1,11 +1,13 @@
 package com.example.ecobazaar.service;
 
 
+import com.example.ecobazaar.config.JwtUtil;
 import com.example.ecobazaar.dto.LoginRequest;
 import com.example.ecobazaar.dto.RegisterRequest;
 import com.example.ecobazaar.dto.UserResponse;
 import com.example.ecobazaar.model.User;
 import com.example.ecobazaar.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,11 +16,14 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public AuthService( UserRepository userRepository){
-        this.userRepository = userRepository ;
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
-
 
     // check duplicate email -> save new user -> return response
     public UserResponse register(RegisterRequest request){
@@ -65,5 +70,21 @@ public class AuthService {
                 user.getRole(),
                 user.getEcoScore()
         );
+    }
+
+    // Login user
+
+    public UserResponse login(LoginRequest login) {
+        User user = userRepository.findByEmail(login.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+
+        if (!passwordEncoder.matches(login.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid credentials!");
+        }
+
+
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getId());
+        return new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getEcoScore(), token);
+
     }
 }
