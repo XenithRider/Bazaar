@@ -8,11 +8,16 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product , Long> {
 
-    // Get only eco-friendly products
-    List<Product> findByEcoCertifiedTrue() ;
-
-    // 2. Get eco-certified products sorted by carbon impact
+    List<Product> findByEcoCertifiedTrue();
     List<Product> findByEcoCertifiedTrueOrderByCarbonImpactAsc();
 
-    Optional<Product> findFirstByNameContainingAndEcoCertifiedTrue(String name);
+    Optional<Product> findFirstByEcoCertifiedTrueAndNameContainingIgnoreCase(String namePart);
+
+    Optional<Product> findFirstByEcoCertifiedFalseAndNameContainingIgnoreCase(String keyword);
+
+    List<Product> findByEcoRequestedTrue();
+    List<Product> findBySeller_Id(Long sellerId);
+    List<Product> findByEcoCertifiedTrueAndNameContainingIgnoreCase(String name);
+
+    List<Product> findByEcoCertifiedFalse();
 }
