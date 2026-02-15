@@ -21,24 +21,27 @@ public class AdminService {
     private final OrderRepository orderRepository;
 
     public AdminService(ProductRepository productRepository, UserRepository userRepository, OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
-        this.orderRepository = orderRepository;
     }
 
     public Product approveProduct(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Product not found"));
-
-        product.setEcoCertified(true);
-        return productRepository.save(product);
+        return productRepository.findById(id)
+                .map(p -> {
+                    p.setEcoCertified(true);   // <= ADMIN APPROVES
+                    p.setEcoRequested(false);  // <= clear request
+                    return productRepository.save(p);
+                })
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
     }
 
     public User approveSeller(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("User not Found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setRole("SELLER");
+        user.setRole("ROLE_SELLER");
+        user.setSellerRequestPending(false);
         return userRepository.save(user);
     }
 
@@ -46,32 +49,49 @@ public class AdminService {
         return userRepository.findAll();
     }
 
-
     public Map<String, Object> getAdminReport(){
         List<Order> orders = orderRepository.findAll();
-        double totalCarbon = orders.stream().mapToDouble(Order::getTotalCarbon).sum();
+
+        double totalCarbonUsed = orders.stream().mapToDouble(Order::getCarbonUsed).sum();
+        double totalCarbonSaved = orders.stream().mapToDouble(Order::getCarbonSaved).sum();
         double totalRevenue = orders.stream().mapToDouble(Order::getTotalPrice).sum();
 
-        Map<String, Object>report = new HashMap<>();
+        Map<String, Object> report = new HashMap<>();
         report.put("totalOrders", orders.size());
         report.put("totalRevenue", totalRevenue);
-        report.put("totalCarbonSaved", totalCarbon);
+        report.put("totalCarbonUsed", totalCarbonUsed);
+        report.put("totalCarbonSaved", totalCarbonSaved);
+        report.put("netCarbon", totalCarbonUsed - totalCarbonSaved);
         report.put("totalUsers", userRepository.count());
         report.put("totalProducts", productRepository.count());
-        return report;
 
+        return report;
     }
 
     public String generateReportCSV() {
-        List<Order> order = orderRepository.findAll();
-        StringBuilder csv = new StringBuilder("OrderId, UserId, TotalPrice, TotalCarbon\n");
+        List<Order> orders = orderRepository.findAll();
 
-        for(Order o:order) {
+        StringBuilder csv = new StringBuilder("OrderId,UserId,TotalPrice,CarbonUsed,CarbonSaved,OrderDate\n");
+
+        for (Order o : orders) {
             csv.append(o.getId()).append(",")
                     .append(o.getUserId()).append(",")
                     .append(o.getTotalPrice()).append(",")
-                    .append(o.getTotalCarbon()).append("\n");
+                    .append(o.getCarbonUsed()).append(",")
+                    .append(o.getCarbonSaved()).append(",")
+                    .append(o.getOrderDate()).append("\n");
         }
         return csv.toString();
     }
+
+    public Product rejectProduct(Long id) {
+        return productRepository.findById(id)
+                .map(p -> {
+                    p.setEcoRequested(false);
+                    p.setEcoCertified(false);
+                    return productRepository.save(p);
+                })
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+    }
+
 }
