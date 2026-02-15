@@ -20,4 +20,6 @@ public interface ProductRepository extends JpaRepository<Product , Long> {
     List<Product> findByEcoCertifiedTrueAndNameContainingIgnoreCase(String name);
 
     List<Product> findByEcoCertifiedFalse();
+
+    Optional<Product> findFirstByNameContainingAndEcoCertifiedTrue(String namePart);
 }

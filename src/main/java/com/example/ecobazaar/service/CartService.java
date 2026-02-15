@@ -27,6 +27,11 @@ public class CartService {
         return cartRepository.save(cartItem);
     }
 
+    // Add to CartService:
+    public List<CartItem> getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId);
+    }
+
     // Get Smart Cart summary for a user
     public CartSummaryDto getCartSummary(Long userId) {
         List<CartItem> cartItems = cartRepository.findByUserId(userId);
@@ -39,7 +44,7 @@ public class CartService {
             totalPrice += product.getPrice() * item.getQuantity();
             totalCarbon += product.getCarbonImpact() * item.getQuantity();
             // Eco-friendly suggestion
-            if (!product.isEcoCertified()) {
+            if (!product.getEcoCertified()) {
                 Optional<Product> ecoAlt = productRepository
                         .findFirstByNameContainingAndEcoCertifiedTrue(product.getName().split(" ")[0]);
                 if (ecoAlt.isPresent()) {

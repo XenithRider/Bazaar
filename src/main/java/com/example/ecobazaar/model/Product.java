@@ -12,15 +12,15 @@ public class Product {
     private Long id;
     private String name ;
     private String details ;
-    private String price ;
-    private String carbonImpact ;
+    private Double price ;
+    private Double carbonImpact ;
     private Boolean ecoCertified ;
     private Long sellerId ;
 
     public Product() {
     }
 
-    public Product(Long id, String name, String details, String price, String carbonImpact, Boolean ecoCertified, Long sellerId) {
+    public Product(Long id, String name, String details, Double price, Double carbonImpact, Boolean ecoCertified, Long sellerId) {
         this.id = id;
         this.name = name;
         this.details = details;
@@ -54,19 +54,19 @@ public class Product {
         this.details = details;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public String getCarbonImpact() {
+    public Double getCarbonImpact() {
         return carbonImpact;
     }
 
-    public void setCarbonImpact(String carbonImpact) {
+    public void setCarbonImpact(Double carbonImpact) {
         this.carbonImpact = carbonImpact;
     }
 
