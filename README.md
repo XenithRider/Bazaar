@@ -1,4 +1,4 @@
-# 🌿 EcoBazaar — Eco-Friendly Shopping Backend
+# 🌿 GreenMart — Eco-Friendly Shopping Backend
 
 A full-featured **Spring Boot REST API** for an eco-conscious e-commerce platform. EcoBazaar lets users shop sustainably, tracks carbon footprint per order, and empowers sellers to get eco-certification for their products — all managed through a role-based admin system.
 
